@@ -1,0 +1,100 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const PAYSTACK_SECRET_KEY = Deno.env.get('PAYSTACK_SECRET_KEY');
+    if (!PAYSTACK_SECRET_KEY) throw new Error('PAYSTACK_SECRET_KEY not configured');
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Get user from auth header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) throw new Error('Not authenticated');
+
+    const publishableKey = Deno.env.get('SUPABASE_PUBLISHABLE_KEY')!;
+    const userClient = createClient(supabaseUrl, publishableKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) throw new Error('Not authenticated');
+
+    const { email, contestant_id, event_id, vote_count } = await req.json();
+
+    if (!contestant_id || !event_id || !vote_count || vote_count < 1) {
+      throw new Error('Missing required fields');
+    }
+
+    // Get event price
+    const { data: event, error: eventErr } = await supabase
+      .from('events')
+      .select('price_per_vote, status')
+      .eq('id', event_id)
+      .single();
+
+    if (eventErr || !event) throw new Error('Event not found');
+    if (event.status !== 'active') throw new Error('Event is not active');
+
+    const amount = event.price_per_vote * vote_count * 100; // Paystack uses kobo
+    const reference = `vp_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
+
+    // Initialize Paystack transaction
+    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email || user.email,
+        amount,
+        reference,
+        callback_url: `${req.headers.get('origin')}/payment/verify?reference=${reference}`,
+        metadata: {
+          user_id: user.id,
+          contestant_id,
+          event_id,
+          vote_count,
+        },
+      }),
+    });
+
+    const paystackData = await paystackRes.json();
+    if (!paystackRes.ok) throw new Error(`Paystack error: ${JSON.stringify(paystackData)}`);
+
+    // Create pending payment record
+    await supabase.from('payments').insert({
+      user_id: user.id,
+      event_id,
+      contestant_id,
+      amount: event.price_per_vote * vote_count,
+      vote_count,
+      paystack_reference: reference,
+      status: 'pending',
+    });
+
+    return new Response(JSON.stringify({
+      authorization_url: paystackData.data.authorization_url,
+      reference,
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(JSON.stringify({ error: message }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});
