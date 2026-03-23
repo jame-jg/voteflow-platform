@@ -14,16 +14,253 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contestants: {
+        Row: {
+          bio: string | null
+          created_at: string
+          event_id: string
+          id: string
+          name: string
+          photo_url: string | null
+          vote_count: number
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          event_id: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          vote_count?: number
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          vote_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contestants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          banner_url: string | null
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          organizer_id: string
+          price_per_vote: number
+          start_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          organizer_id: string
+          price_per_vote?: number
+          start_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          organizer_id?: string
+          price_per_vote?: number
+          start_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          contestant_id: string
+          created_at: string
+          event_id: string
+          id: string
+          paystack_reference: string
+          status: string
+          user_id: string | null
+          vote_count: number
+        }
+        Insert: {
+          amount: number
+          contestant_id: string
+          created_at?: string
+          event_id: string
+          id?: string
+          paystack_reference: string
+          status?: string
+          user_id?: string | null
+          vote_count?: number
+        }
+        Update: {
+          amount?: number
+          contestant_id?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          paystack_reference?: string
+          status?: string
+          user_id?: string | null
+          vote_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_contestant_id_fkey"
+            columns: ["contestant_id"]
+            isOneToOne: false
+            referencedRelation: "contestants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          contestant_id: string
+          created_at: string
+          event_id: string
+          id: string
+          payment_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          contestant_id: string
+          created_at?: string
+          event_id: string
+          id?: string
+          payment_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          contestant_id?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          payment_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_contestant_id_fkey"
+            columns: ["contestant_id"]
+            isOneToOne: false
+            referencedRelation: "contestants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votes_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      increment_vote_count: {
+        Args: { p_contestant_id: string; p_count?: number }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "organizer" | "voter"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +387,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "organizer", "voter"],
+    },
   },
 } as const
