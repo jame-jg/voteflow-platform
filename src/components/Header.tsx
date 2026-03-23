@@ -1,8 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Vote, ChevronDown } from "lucide-react";
+import { Menu, X, Vote, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -13,6 +14,13 @@ const navLinks = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -26,72 +34,63 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
+            <Link key={link.path} to={link.path}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                location.pathname === link.path
-                  ? "bg-accent/20 text-accent"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {link.label}
-            </Link>
+                location.pathname === link.path ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-foreground"
+              }`}>{link.label}</Link>
           ))}
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link to="/login">
-            <Button variant="ghost" size="sm">Log in</Button>
-          </Link>
-          <Link to="/login">
-            <Button variant="gold" size="sm">Get Started</Button>
-          </Link>
+          {user ? (
+            <>
+              <Link to="/organizer">
+                <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
+              </Link>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="h-4 w-4" /> Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login"><Button variant="ghost" size="sm">Log in</Button></Link>
+              <Link to="/login"><Button variant="gold" size="sm">Get Started</Button></Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden text-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
+        <button className="md:hidden text-foreground" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-border md:hidden"
-          >
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden border-t border-border md:hidden">
             <nav className="container flex flex-col gap-1 py-4">
               {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileOpen(false)}
+                <Link key={link.path} to={link.path} onClick={() => setMobileOpen(false)}
                   className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                    location.pathname === link.path
-                      ? "bg-accent/20 text-accent"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </Link>
+                    location.pathname === link.path ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-foreground"
+                  }`}>{link.label}</Link>
               ))}
               <div className="mt-3 flex flex-col gap-2 px-4">
-                <Link to="/login" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" className="w-full">Log in</Button>
-                </Link>
-                <Link to="/login" onClick={() => setMobileOpen(false)}>
-                  <Button variant="gold" className="w-full">Get Started</Button>
-                </Link>
+                {user ? (
+                  <>
+                    <Link to="/organizer" onClick={() => setMobileOpen(false)}>
+                      <Button variant="ghost" className="w-full">Dashboard</Button>
+                    </Link>
+                    <Button variant="outline" className="w-full" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setMobileOpen(false)}><Button variant="ghost" className="w-full">Log in</Button></Link>
+                    <Link to="/login" onClick={() => setMobileOpen(false)}><Button variant="gold" className="w-full">Get Started</Button></Link>
+                  </>
+                )}
               </div>
             </nav>
           </motion.div>
