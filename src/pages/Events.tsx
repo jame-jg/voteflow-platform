@@ -76,6 +76,7 @@ const Events = () => {
                   totalVotes={0}
                   contestantCount={event.contestants?.[0]?.count || 0}
                   pricePerVote={event.price_per_vote}
+                  currency={event.currency || "NGN"}
                   status={event.status === "pending" ? "upcoming" : event.status}
                   endDate={event.end_date ? new Date(event.end_date).toLocaleDateString() : "TBD"}
                 />
