@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/currency";
 
 export interface EventCardProps {
   id: string;
@@ -11,6 +12,7 @@ export interface EventCardProps {
   totalVotes: number;
   contestantCount: number;
   pricePerVote: number;
+  currency?: string;
   status: "active" | "upcoming" | "ended";
   endDate: string;
 }
@@ -21,7 +23,7 @@ const statusColors = {
   ended: "bg-muted text-muted-foreground",
 };
 
-const EventCard = ({ id, title, description, bannerUrl, totalVotes, contestantCount, pricePerVote, status, endDate }: EventCardProps) => (
+const EventCard = ({ id, title, description, bannerUrl, totalVotes, contestantCount, pricePerVote, currency = "NGN", status, endDate }: EventCardProps) => (
   <motion.div
     whileHover={{ y: -4 }}
     transition={{ duration: 0.2 }}
@@ -49,7 +51,7 @@ const EventCard = ({ id, title, description, bannerUrl, totalVotes, contestantCo
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs text-muted-foreground">Price per vote</p>
-          <p className="font-display text-lg font-bold text-accent">₦{pricePerVote}</p>
+          <p className="font-display text-lg font-bold text-accent">{formatPrice(pricePerVote, currency)}</p>
         </div>
         <Link to={`/events/${id}`}>
           <Button variant="gold" size="sm">Vote Now</Button>

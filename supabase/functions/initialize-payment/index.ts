@@ -36,17 +36,18 @@ serve(async (req) => {
       throw new Error('Missing required fields');
     }
 
-    // Get event price
+    // Get event price and currency
     const { data: event, error: eventErr } = await supabase
       .from('events')
-      .select('price_per_vote, status')
+      .select('price_per_vote, status, currency')
       .eq('id', event_id)
       .single();
 
     if (eventErr || !event) throw new Error('Event not found');
     if (event.status !== 'active') throw new Error('Event is not active');
 
-    const amount = event.price_per_vote * vote_count * 100; // Paystack uses kobo
+    const amount = event.price_per_vote * vote_count * 100; // Paystack uses subunit
+    const currency = event.currency || 'NGN';
     const reference = `vp_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`;
 
     // Initialize Paystack transaction
@@ -59,6 +60,7 @@ serve(async (req) => {
       body: JSON.stringify({
         email: email || user.email,
         amount,
+        currency,
         reference,
         callback_url: `${req.headers.get('origin')}/payment/verify?reference=${reference}`,
         metadata: {

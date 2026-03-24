@@ -1,0 +1,1 @@
+ALTER TABLE public.events ADD COLUMN currency text NOT NULL DEFAULT 'NGN';

@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { formatPrice } from "@/lib/currency";
 
 interface VoteModalProps {
   isOpen: boolean;
   onClose: () => void;
   contestant: { id: string; name: string; photoUrl?: string };
-  event: { id: string; pricePerVote: number; title: string };
+  event: { id: string; pricePerVote: number; title: string; currency: string };
 }
 
 const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
@@ -41,7 +42,6 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      // Redirect to Paystack
       window.location.href = data.authorization_url;
     } catch (err: any) {
       toast({
@@ -100,7 +100,7 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
             <div className="mb-6 rounded-xl bg-accent/10 p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Price per vote</span>
-                <span>₦{event.pricePerVote}</span>
+                <span>{formatPrice(event.pricePerVote, event.currency)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Votes</span>
@@ -108,7 +108,7 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
               </div>
               <div className="mt-2 border-t border-border pt-2 flex items-center justify-between">
                 <span className="font-semibold">Total</span>
-                <span className="font-display text-2xl font-bold text-accent">₦{totalAmount.toLocaleString()}</span>
+                <span className="font-display text-2xl font-bold text-accent">{formatPrice(totalAmount, event.currency)}</span>
               </div>
             </div>
 
@@ -119,7 +119,7 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
               onClick={handlePayment}
               disabled={loading}
             >
-              {loading ? "Processing..." : `Pay ₦${totalAmount.toLocaleString()} & Vote`}
+              {loading ? "Processing..." : `Pay ${formatPrice(totalAmount, event.currency)} & Vote`}
             </Button>
 
             <p className="mt-3 text-center text-xs text-muted-foreground">

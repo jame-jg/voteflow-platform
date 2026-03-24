@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Users, Trophy } from "lucide-react";
+import { formatPrice } from "@/lib/currency";
 import Layout from "@/components/Layout";
 import ContestantCard from "@/components/ContestantCard";
 import VoteModal from "@/components/VoteModal";
@@ -151,7 +152,7 @@ const EventDetails = () => {
             </div>
             <div className="mt-6 rounded-lg bg-accent/10 p-4 text-center">
               <p className="text-xs text-muted-foreground">Price per vote</p>
-              <p className="font-display text-3xl font-bold text-accent">₦{event.price_per_vote}</p>
+              <p className="font-display text-3xl font-bold text-accent">{formatPrice(event.price_per_vote, event.currency || "NGN")}</p>
             </div>
           </motion.div>
         </div>
@@ -184,7 +185,7 @@ const EventDetails = () => {
           isOpen={!!selectedContestant}
           onClose={() => setSelectedContestant(null)}
           contestant={{ id: selectedContestant.id, name: selectedContestant.name, photoUrl: selectedContestant.photo_url }}
-          event={{ id: event.id, pricePerVote: event.price_per_vote, title: event.title }}
+          event={{ id: event.id, pricePerVote: event.price_per_vote, title: event.title, currency: event.currency || "NGN" }}
         />
       )}
     </Layout>

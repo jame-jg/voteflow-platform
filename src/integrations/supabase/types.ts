@@ -56,6 +56,7 @@ export type Database = {
         Row: {
           banner_url: string | null
           created_at: string
+          currency: string
           description: string | null
           end_date: string | null
           id: string
@@ -69,6 +70,7 @@ export type Database = {
         Insert: {
           banner_url?: string | null
           created_at?: string
+          currency?: string
           description?: string | null
           end_date?: string | null
           id?: string
@@ -82,6 +84,7 @@ export type Database = {
         Update: {
           banner_url?: string | null
           created_at?: string
+          currency?: string
           description?: string | null
           end_date?: string | null
           id?: string
