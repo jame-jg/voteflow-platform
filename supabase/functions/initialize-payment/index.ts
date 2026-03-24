@@ -60,6 +60,7 @@ serve(async (req) => {
       body: JSON.stringify({
         email: email || user.email,
         amount,
+        currency,
         reference,
         callback_url: `${req.headers.get('origin')}/payment/verify?reference=${reference}`,
         metadata: {
