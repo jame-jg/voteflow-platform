@@ -10,6 +10,7 @@ import EventDetails from "./pages/EventDetails";
 import Login from "./pages/Login";
 import Leaderboard from "./pages/Leaderboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
+import CreateEvent from "./pages/CreateEvent";
 import AdminDashboard from "./pages/AdminDashboard";
 import PaymentVerify from "./pages/PaymentVerify";
 import NotFound from "./pages/NotFound";
