@@ -152,7 +152,7 @@ const EventDetails = () => {
             </div>
             <div className="mt-6 rounded-lg bg-accent/10 p-4 text-center">
               <p className="text-xs text-muted-foreground">Price per vote</p>
-              <p className="font-display text-3xl font-bold text-accent">₦{event.price_per_vote}</p>
+              <p className="font-display text-3xl font-bold text-accent">{formatPrice(event.price_per_vote, event.currency || "NGN")}</p>
             </div>
           </motion.div>
         </div>
