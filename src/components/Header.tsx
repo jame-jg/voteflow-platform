@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Vote, LogOut, User } from "lucide-react";
+import { Menu, X, Vote, LogOut, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -13,9 +14,17 @@ const navLinks = [
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
+      setIsAdmin(!!(data && data.length > 0));
+    });
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,6 +55,11 @@ const Header = () => {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
             <>
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button variant="ghost" size="sm"><Shield className="h-4 w-4" /> Admin</Button>
+                </Link>
+              )}
               <Link to="/organizer">
                 <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
               </Link>
@@ -80,6 +94,11 @@ const Header = () => {
               <div className="mt-3 flex flex-col gap-2 px-4">
                 {user ? (
                   <>
+                    {isAdmin && (
+                      <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                        <Button variant="ghost" className="w-full"><Shield className="h-4 w-4" /> Admin</Button>
+                      </Link>
+                    )}
                     <Link to="/organizer" onClick={() => setMobileOpen(false)}>
                       <Button variant="ghost" className="w-full">Dashboard</Button>
                     </Link>
