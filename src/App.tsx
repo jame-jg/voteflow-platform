@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/organizer" element={<OrganizerDashboard />} />
+            <Route path="/events/create" element={<CreateEvent />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment/verify" element={<PaymentVerify />} />
             <Route path="*" element={<NotFound />} />

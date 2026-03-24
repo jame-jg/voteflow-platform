@@ -185,7 +185,7 @@ const EventDetails = () => {
           isOpen={!!selectedContestant}
           onClose={() => setSelectedContestant(null)}
           contestant={{ id: selectedContestant.id, name: selectedContestant.name, photoUrl: selectedContestant.photo_url }}
-          event={{ id: event.id, pricePerVote: event.price_per_vote, title: event.title }}
+          event={{ id: event.id, pricePerVote: event.price_per_vote, title: event.title, currency: event.currency || "NGN" }}
         />
       )}
     </Layout>
