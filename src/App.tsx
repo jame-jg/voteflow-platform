@@ -12,6 +12,7 @@ import Leaderboard from "./pages/Leaderboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
 import CreateEvent from "./pages/CreateEvent";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminVerify from "./pages/AdminVerify";
 import PaymentVerify from "./pages/PaymentVerify";
 import NotFound from "./pages/NotFound";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/organizer" element={<OrganizerDashboard />} />
             <Route path="/events/create" element={<CreateEvent />} />
+            <Route path="/admin/verify" element={<AdminVerify />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment/verify" element={<PaymentVerify />} />
             <Route path="*" element={<NotFound />} />

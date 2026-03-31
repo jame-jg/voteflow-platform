@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Upload, Plus, X, Loader2 } from "lucide-react";
@@ -22,8 +22,23 @@ interface ContestantInput {
 
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [roleChecked, setRoleChecked] = useState(false);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) { navigate("/login"); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      const roles = (data || []).map((r) => r.role);
+      if (!roles.includes("organizer") && !roles.includes("admin")) {
+        toast({ title: "Access Denied", description: "Only organizers can create events. Please register as an organizer.", variant: "destructive" });
+        navigate("/events");
+      } else {
+        setRoleChecked(true);
+      }
+    });
+  }, [user, authLoading]);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

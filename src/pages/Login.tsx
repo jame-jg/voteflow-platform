@@ -12,6 +12,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState<"voter" | "organizer">("voter");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const Login = () => {
           email,
           password,
           options: {
-            data: { full_name: name },
+            data: { full_name: name, signup_role: role },
             emailRedirectTo: window.location.origin,
           },
         });
@@ -60,14 +61,35 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignUp && (
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required
-                    className="h-11 w-full rounded-lg border border-input bg-background pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+              <>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required
+                      className="h-11 w-full rounded-lg border border-input bg-background pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+                  </div>
                 </div>
-              </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium">Register as</label>
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => setRole("voter")}
+                      className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-all ${
+                        role === "voter" ? "border-accent bg-accent/10 text-accent" : "border-input bg-background text-muted-foreground hover:border-accent/50"
+                      }`}>
+                      🗳️ Voter
+                      <span className="mt-1 block text-xs opacity-70">Vote for contestants</span>
+                    </button>
+                    <button type="button" onClick={() => setRole("organizer")}
+                      className={`flex-1 rounded-lg border px-4 py-3 text-sm font-medium transition-all ${
+                        role === "organizer" ? "border-accent bg-accent/10 text-accent" : "border-input bg-background text-muted-foreground hover:border-accent/50"
+                      }`}>
+                      🎯 Organizer
+                      <span className="mt-1 block text-xs opacity-70">Create & manage events</span>
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
             <div>
               <label className="mb-1.5 block text-sm font-medium">Email</label>

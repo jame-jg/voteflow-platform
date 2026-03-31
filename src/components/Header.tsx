@@ -15,14 +15,17 @@ const navLinks = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isOrganizer, setIsOrganizer] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
   useEffect(() => {
-    if (!user) { setIsAdmin(false); return; }
-    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
-      setIsAdmin(!!(data && data.length > 0));
+    if (!user) { setIsAdmin(false); setIsOrganizer(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      const roles = (data || []).map((r) => r.role);
+      setIsAdmin(roles.includes("admin"));
+      setIsOrganizer(roles.includes("organizer") || roles.includes("admin"));
     });
   }, [user]);
 
@@ -56,13 +59,15 @@ const Header = () => {
           {user ? (
             <>
               {isAdmin && (
-                <Link to="/admin">
+                <Link to="/admin/verify">
                   <Button variant="ghost" size="sm"><Shield className="h-4 w-4" /> Admin</Button>
                 </Link>
               )}
-              <Link to="/organizer">
-                <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
-              </Link>
+              {isOrganizer && (
+                <Link to="/organizer">
+                  <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
+                </Link>
+              )}
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" /> Sign Out
               </Button>
@@ -95,13 +100,15 @@ const Header = () => {
                 {user ? (
                   <>
                     {isAdmin && (
-                      <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                      <Link to="/admin/verify" onClick={() => setMobileOpen(false)}>
                         <Button variant="ghost" className="w-full"><Shield className="h-4 w-4" /> Admin</Button>
                       </Link>
                     )}
-                    <Link to="/organizer" onClick={() => setMobileOpen(false)}>
-                      <Button variant="ghost" className="w-full">Dashboard</Button>
-                    </Link>
+                    {isOrganizer && (
+                      <Link to="/organizer" onClick={() => setMobileOpen(false)}>
+                        <Button variant="ghost" className="w-full">Dashboard</Button>
+                      </Link>
+                    )}
                     <Button variant="outline" className="w-full" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>
                   </>
                 ) : (
