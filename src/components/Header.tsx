@@ -59,13 +59,15 @@ const Header = () => {
           {user ? (
             <>
               {isAdmin && (
-                <Link to="/admin">
+                <Link to="/admin/verify">
                   <Button variant="ghost" size="sm"><Shield className="h-4 w-4" /> Admin</Button>
                 </Link>
               )}
-              <Link to="/organizer">
-                <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
-              </Link>
+              {isOrganizer && (
+                <Link to="/organizer">
+                  <Button variant="ghost" size="sm"><User className="h-4 w-4" /> Dashboard</Button>
+                </Link>
+              )}
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" /> Sign Out
               </Button>
