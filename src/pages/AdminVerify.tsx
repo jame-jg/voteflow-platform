@@ -8,8 +8,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const ADMIN_ACCESS_CODE = "VOTEPAY-ADMIN-2026";
-
 const AdminVerify = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -17,45 +15,62 @@ const AdminVerify = () => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<"request" | "verify">("request");
-  const [generatedCode, setGeneratedCode] = useState("");
+  const [maskedEmail, setMaskedEmail] = useState("");
+
+  const maskEmail = (email: string) => {
+    return email.replace(/^(.)(.*)(@.*)$/, (_, first, middle, domain) => {
+      return first + "*".repeat(Math.min(middle.length, 5)) + domain;
+    });
+  };
 
   const handleRequestCode = async () => {
     if (!user) { navigate("/login"); return; }
     setLoading(true);
 
-    // Check if user is admin
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin");
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-otp", {
+        body: { action: "request" },
+      });
 
-    if (!roles || roles.length === 0) {
-      toast({ title: "Access Denied", description: "You do not have admin privileges.", variant: "destructive" });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      setMaskedEmail(data.masked_email || maskEmail(user.email || ""));
+      
+      // In dev mode, show the code via toast (remove in production with email infra)
+      if (data._dev_code) {
+        toast({ title: "Access Code", description: `Your code: ${data._dev_code}` });
+      } else {
+        toast({ title: "Code Sent", description: "Check your email for the 6-digit access code." });
+      }
+      
+      setStep("verify");
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to send access code.", variant: "destructive" });
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Generate a 6-digit OTP code
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedCode(otp);
-
-    // Send OTP to admin's email via a simple approach
-    // For now, we use a magic link style — store in session
-    // In production, this would send via email edge function
-    toast({ title: "Access Code Sent", description: `Your admin access code is: ${otp} (sent to ${user.email})` });
-    setStep("verify");
-    setLoading(false);
   };
 
-  const handleVerifyCode = () => {
-    if (code === generatedCode) {
-      // Store admin verification in sessionStorage (not localStorage for security)
-      sessionStorage.setItem("admin_verified", Date.now().toString());
-      toast({ title: "Access Granted", description: "Welcome to the admin dashboard." });
-      navigate("/admin");
-    } else {
-      toast({ title: "Invalid Code", description: "The access code you entered is incorrect.", variant: "destructive" });
+  const handleVerifyCode = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-otp", {
+        body: { action: "verify", code },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      if (data.verified) {
+        sessionStorage.setItem("admin_verified", Date.now().toString());
+        toast({ title: "Access Granted", description: "Welcome to the admin dashboard." });
+        navigate("/admin");
+      }
+    } catch (err: any) {
+      toast({ title: "Verification Failed", description: err.message || "Invalid or expired code.", variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,14 +107,14 @@ const AdminVerify = () => {
           <p className="mb-6 text-center text-sm text-muted-foreground">
             {step === "request"
               ? "Request a one-time access code to verify your admin identity."
-              : "Enter the 6-digit code sent to your email."}
+              : `Enter the 6-digit code sent to ${maskedEmail}`}
           </p>
 
           {step === "request" ? (
             <div className="space-y-4">
               <div className="rounded-lg border border-border bg-muted/50 p-4">
                 <p className="text-sm text-muted-foreground">Signed in as</p>
-                <p className="font-medium text-foreground">{user.email}</p>
+                <p className="font-medium text-foreground">{maskEmail(user.email || "")}</p>
               </div>
               <Button variant="gold" className="w-full" onClick={handleRequestCode} disabled={loading}>
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Send Access Code <ArrowRight className="h-4 w-4" /></>}
@@ -112,14 +127,15 @@ const AdminVerify = () => {
                 <input
                   type="text"
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter 6-digit code"
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="000000"
                   maxLength={6}
                   className="h-12 w-full rounded-lg border border-input bg-background px-4 text-center text-2xl font-bold tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
-              <Button variant="gold" className="w-full" onClick={handleVerifyCode} disabled={!code || code.length < 6}>
-                Verify & Access Dashboard <ArrowRight className="h-4 w-4" />
+              <p className="text-xs text-muted-foreground text-center">Code expires in 5 minutes</p>
+              <Button variant="gold" className="w-full" onClick={handleVerifyCode} disabled={!code || code.length < 6 || loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Verify & Access Dashboard <ArrowRight className="h-4 w-4" /></>}
               </Button>
               <button onClick={() => { setStep("request"); setCode(""); }} className="w-full text-center text-sm text-muted-foreground hover:text-foreground">
                 Resend code

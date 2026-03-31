@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_otp: {
+        Row: {
+          code_hash: string
+          created_at: string
+          expires_at: string
+          id: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       contestants: {
         Row: {
           bio: string | null
