@@ -100,13 +100,15 @@ const Header = () => {
                 {user ? (
                   <>
                     {isAdmin && (
-                      <Link to="/admin" onClick={() => setMobileOpen(false)}>
+                      <Link to="/admin/verify" onClick={() => setMobileOpen(false)}>
                         <Button variant="ghost" className="w-full"><Shield className="h-4 w-4" /> Admin</Button>
                       </Link>
                     )}
-                    <Link to="/organizer" onClick={() => setMobileOpen(false)}>
-                      <Button variant="ghost" className="w-full">Dashboard</Button>
-                    </Link>
+                    {isOrganizer && (
+                      <Link to="/organizer" onClick={() => setMobileOpen(false)}>
+                        <Button variant="ghost" className="w-full">Dashboard</Button>
+                      </Link>
+                    )}
                     <Button variant="outline" className="w-full" onClick={() => { handleSignOut(); setMobileOpen(false); }}>Sign Out</Button>
                   </>
                 ) : (
