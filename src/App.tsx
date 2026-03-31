@@ -12,6 +12,7 @@ import Leaderboard from "./pages/Leaderboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
 import CreateEvent from "./pages/CreateEvent";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminVerify from "./pages/AdminVerify";
 import PaymentVerify from "./pages/PaymentVerify";
 import NotFound from "./pages/NotFound";
 
