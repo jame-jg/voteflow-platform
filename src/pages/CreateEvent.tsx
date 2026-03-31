@@ -22,8 +22,23 @@ interface ContestantInput {
 
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [roleChecked, setRoleChecked] = useState(false);
+
+  // Check organizer role on mount
+  useState(() => {
+    if (!user) return;
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      const roles = (data || []).map((r) => r.role);
+      if (!roles.includes("organizer") && !roles.includes("admin")) {
+        toast({ title: "Access Denied", description: "Only organizers can create events. Please register as an organizer.", variant: "destructive" });
+        navigate("/events");
+      } else {
+        setRoleChecked(true);
+      }
+    });
+  });
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
