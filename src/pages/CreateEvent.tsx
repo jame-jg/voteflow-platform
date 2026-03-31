@@ -26,9 +26,9 @@ const CreateEvent = () => {
   const { toast } = useToast();
   const [roleChecked, setRoleChecked] = useState(false);
 
-  // Check organizer role on mount
-  useState(() => {
-    if (!user) return;
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) { navigate("/login"); return; }
     supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
       const roles = (data || []).map((r) => r.role);
       if (!roles.includes("organizer") && !roles.includes("admin")) {
@@ -38,7 +38,7 @@ const CreateEvent = () => {
         setRoleChecked(true);
       }
     });
-  });
+  }, [user, authLoading]);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
