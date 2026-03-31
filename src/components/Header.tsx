@@ -15,14 +15,17 @@ const navLinks = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isOrganizer, setIsOrganizer] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
   useEffect(() => {
-    if (!user) { setIsAdmin(false); return; }
-    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").then(({ data }) => {
-      setIsAdmin(!!(data && data.length > 0));
+    if (!user) { setIsAdmin(false); setIsOrganizer(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).then(({ data }) => {
+      const roles = (data || []).map((r) => r.role);
+      setIsAdmin(roles.includes("admin"));
+      setIsOrganizer(roles.includes("organizer") || roles.includes("admin"));
     });
   }, [user]);
 
