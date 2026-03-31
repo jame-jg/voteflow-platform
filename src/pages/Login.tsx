@@ -27,7 +27,7 @@ const Login = () => {
           email,
           password,
           options: {
-            data: { full_name: name },
+            data: { full_name: name, signup_role: role },
             emailRedirectTo: window.location.origin,
           },
         });
