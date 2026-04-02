@@ -23,7 +23,26 @@ import {
 const OrganizerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteEvent = async (eventId: string, eventTitle: string) => {
+    setDeletingId(eventId);
+    try {
+      // Delete contestants first (foreign key constraint)
+      await supabase.from("contestants").delete().eq("event_id", eventId);
+      const { error } = await supabase.from("events").delete().eq("id", eventId);
+      if (error) throw error;
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      toast({ title: "Event deleted", description: `"${eventTitle}" has been permanently deleted.` });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete event.", variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
