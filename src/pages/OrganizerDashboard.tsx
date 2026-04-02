@@ -119,10 +119,39 @@ const OrganizerDashboard = () => {
         </div>
 
         <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-          <div className="border-b border-border px-6 py-4">
+          <div className="border-b border-border px-6 py-4 flex items-center justify-between flex-wrap gap-3">
             <h2 className="font-display text-lg font-bold">Your Events</h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              {(() => {
+                const categories = [...new Set(events.map(e => e.category).filter(Boolean))];
+                if (categories.length === 0) return null;
+                return (
+                  <>
+                    <button
+                      onClick={() => setCategoryFilter("all")}
+                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                        categoryFilter === "all" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      }`}
+                    >All</button>
+                    {categories.map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setCategoryFilter(cat)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          categoryFilter === cat ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </>
+                );
+              })()}
+            </div>
           </div>
-          {events.length > 0 ? (
+          {(() => {
+            const filtered = categoryFilter === "all" ? events : events.filter(e => e.category === categoryFilter);
+            return filtered.length > 0 ? (
             <div className="divide-y divide-border/50">
               {events.map((event) => {
                 const revenue = (event.payments || [])
