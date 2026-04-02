@@ -64,10 +64,6 @@ const EventDetails = () => {
   }, [id]);
 
   const handleVote = (contestant: any) => {
-    if (!user) {
-      toast({ title: "Login Required", description: "Please log in to vote." });
-      return;
-    }
     if (event?.status !== "active") {
       toast({ title: "Voting Closed", description: "This event is not currently accepting votes." });
       return;

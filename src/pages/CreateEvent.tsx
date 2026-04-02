@@ -42,6 +42,7 @@ const CreateEvent = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [pricePerVote, setPricePerVote] = useState("100");
   const [currency, setCurrency] = useState("NGN");
   const [startDate, setStartDate] = useState("");
@@ -126,6 +127,7 @@ const CreateEvent = () => {
         .insert({
           title,
           description,
+          category: category || null,
           price_per_vote: parseInt(pricePerVote) || 100,
           currency,
           start_date: startDate || null,
@@ -188,6 +190,20 @@ const CreateEvent = () => {
             <div>
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe your event..." className="mt-1" rows={4} />
+            </div>
+
+            <div>
+              <Label>Category</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Beauty", "Music", "Sports", "Fashion", "Talent", "Academic", "Corporate", "Entertainment", "Other"].map((cat) => (
+                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">

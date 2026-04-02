@@ -82,6 +82,7 @@ export type Database = {
       events: {
         Row: {
           banner_url: string | null
+          category: string | null
           created_at: string
           currency: string
           description: string | null
@@ -96,6 +97,7 @@ export type Database = {
         }
         Insert: {
           banner_url?: string | null
+          category?: string | null
           created_at?: string
           currency?: string
           description?: string | null
@@ -110,6 +112,7 @@ export type Database = {
         }
         Update: {
           banner_url?: string | null
+          category?: string | null
           created_at?: string
           currency?: string
           description?: string | null

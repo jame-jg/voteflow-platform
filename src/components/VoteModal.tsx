@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Minus, Plus } from "lucide-react";
+import { X, Minus, Plus, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,14 +17,16 @@ interface VoteModalProps {
 const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
   const [voteCount, setVoteCount] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const { user } = useAuth();
   const { toast } = useToast();
 
   const totalAmount = voteCount * event.pricePerVote;
 
   const handlePayment = async () => {
-    if (!user) {
-      toast({ title: "Please log in", description: "You need to be logged in to vote." });
+    const voterEmail = user?.email || email;
+    if (!voterEmail) {
+      toast({ title: "Email required", description: "Please enter your email to proceed with payment.", variant: "destructive" });
       return;
     }
 
@@ -32,7 +34,7 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
     try {
       const { data, error } = await supabase.functions.invoke('initialize-payment', {
         body: {
-          email: user.email,
+          email: voterEmail,
           contestant_id: contestant.id,
           event_id: event.id,
           vote_count: voteCount,
@@ -77,6 +79,25 @@ const VoteModal = ({ isOpen, onClose, contestant, event }: VoteModalProps) => {
 
             <h3 className="mb-1 font-display text-xl font-bold">Vote for {contestant.name}</h3>
             <p className="mb-6 text-sm text-muted-foreground">{event.title}</p>
+
+            {/* Email input for anonymous users */}
+            {!user && (
+              <div className="mb-4">
+                <label className="mb-1.5 block text-sm font-medium">Your Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    required
+                    className="h-11 w-full rounded-lg border border-input bg-background pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">Required for payment receipt</p>
+              </div>
+            )}
 
             <div className="mb-6 rounded-xl border border-border p-4">
               <label className="mb-3 block text-sm font-medium">Number of Votes</label>
