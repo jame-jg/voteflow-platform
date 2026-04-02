@@ -127,6 +127,7 @@ const CreateEvent = () => {
         .insert({
           title,
           description,
+          category: category || null,
           price_per_vote: parseInt(pricePerVote) || 100,
           currency,
           start_date: startDate || null,
