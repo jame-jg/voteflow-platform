@@ -1,18 +1,48 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp } from "lucide-react";
+import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp, Trash2, Loader2 } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/currency";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const OrganizerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteEvent = async (eventId: string, eventTitle: string) => {
+    setDeletingId(eventId);
+    try {
+      // Delete contestants first (foreign key constraint)
+      await supabase.from("contestants").delete().eq("event_id", eventId);
+      const { error } = await supabase.from("events").delete().eq("id", eventId);
+      if (error) throw error;
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      toast({ title: "Event deleted", description: `"${eventTitle}" has been permanently deleted.` });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete event.", variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -106,13 +136,37 @@ const OrganizerDashboard = () => {
                         <span>{formatPrice(revenue, event.currency || "NGN")} revenue</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
                         event.status === "active" ? "bg-success/10 text-success" : "bg-accent/10 text-accent"
                       }`}>{event.status}</span>
                       <Link to={`/events/${event.id}`}>
                         <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
                       </Link>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                            {deletingId === event.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete "{event.title}"?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete this event, all its contestants, and associated data. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDeleteEvent(event.id, event.title)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete Event
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 );
