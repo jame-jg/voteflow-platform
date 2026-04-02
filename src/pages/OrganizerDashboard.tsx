@@ -1,12 +1,24 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp } from "lucide-react";
+import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp, Trash2, Loader2 } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/currency";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const OrganizerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
