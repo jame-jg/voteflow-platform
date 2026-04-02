@@ -43,7 +43,6 @@ const OrganizerDashboard = () => {
       setDeletingId(null);
     }
   };
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (authLoading) return;
