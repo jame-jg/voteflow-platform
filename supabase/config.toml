@@ -1,1 +1,5 @@
 project_id = "zujidhxrgwricqsmkgmq"
+
+[auth]
+site_url = "https://www.electionbridge.online"
+additional_redirect_urls = ["https://www.electionbridge.online", "https://www.electionbridge.online/**"]
