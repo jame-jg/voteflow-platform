@@ -42,6 +42,7 @@ const CreateEvent = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [pricePerVote, setPricePerVote] = useState("100");
   const [currency, setCurrency] = useState("NGN");
   const [startDate, setStartDate] = useState("");
