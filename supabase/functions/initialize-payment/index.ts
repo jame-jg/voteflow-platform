@@ -19,19 +19,30 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get user from auth header
+    // Try to get user from auth header (optional for anonymous voting)
+    let userId: string | null = null;
+    let userEmail: string | null = null;
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) throw new Error('Not authenticated');
-
-    const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: { user }, error: authError } = await userClient.auth.getUser();
-    if (authError || !user) throw new Error('Not authenticated');
+    if (authHeader && authHeader !== 'Bearer null') {
+      try {
+        const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+        const userClient = createClient(supabaseUrl, anonKey, {
+          global: { headers: { Authorization: authHeader } },
+        });
+        const { data: { user } } = await userClient.auth.getUser();
+        if (user) {
+          userId = user.id;
+          userEmail = user.email || null;
+        }
+      } catch {
+        // Anonymous voting - no user, that's fine
+      }
+    }
 
     const { email, contestant_id, event_id, vote_count } = await req.json();
 
+    const voterEmail = email || userEmail;
+    if (!voterEmail) throw new Error('Email is required for payment');
     if (!contestant_id || !event_id || !vote_count || vote_count < 1) {
       throw new Error('Missing required fields');
     }
@@ -58,13 +69,13 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: email || user.email,
+        email: voterEmail,
         amount,
         currency,
         reference,
         callback_url: `${req.headers.get('origin')}/payment/verify?reference=${reference}`,
         metadata: {
-          user_id: user.id,
+          user_id: userId,
           contestant_id,
           event_id,
           vote_count,
@@ -75,9 +86,9 @@ serve(async (req) => {
     const paystackData = await paystackRes.json();
     if (!paystackRes.ok) throw new Error(`Paystack error: ${JSON.stringify(paystackData)}`);
 
-    // Create pending payment record
+    // Create pending payment record (user_id is nullable for anonymous)
     await supabase.from('payments').insert({
-      user_id: user.id,
+      user_id: userId,
       event_id,
       contestant_id,
       amount: event.price_per_vote * vote_count,
