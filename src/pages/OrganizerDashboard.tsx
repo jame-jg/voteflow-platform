@@ -152,61 +152,69 @@ const OrganizerDashboard = () => {
           {(() => {
             const filtered = categoryFilter === "all" ? events : events.filter(e => e.category === categoryFilter);
             return filtered.length > 0 ? (
-            <div className="divide-y divide-border/50">
-              {events.map((event) => {
-                const revenue = (event.payments || [])
-                  .filter((p: any) => p.status === "success")
-                  .reduce((s: number, p: any) => s + p.amount, 0);
-                return (
-                  <div key={event.id} className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{event.title}</p>
-                      <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span>{event.contestants?.[0]?.count || 0} contestants</span>
-                        <span>{formatPrice(revenue, event.currency || "NGN")} revenue</span>
+              <div className="divide-y divide-border/50">
+                {filtered.map((event) => {
+                  const revenue = (event.payments || [])
+                    .filter((p: any) => p.status === "success")
+                    .reduce((s: number, p: any) => s + p.amount, 0);
+                  return (
+                    <div key={event.id} className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium truncate">{event.title}</p>
+                          {event.category && (
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground flex items-center gap-1">
+                              <Tag className="h-2.5 w-2.5" /> {event.category}
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                          <span>{event.contestants?.[0]?.count || 0} contestants</span>
+                          <span>{formatPrice(revenue, event.currency || "NGN")} revenue</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                          event.status === "active" ? "bg-success/10 text-success" : "bg-accent/10 text-accent"
+                        }`}>{event.status}</span>
+                        <Link to={`/events/${event.id}`}>
+                          <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
+                        </Link>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                              {deletingId === event.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete "{event.title}"?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently delete this event, all its contestants, and associated data. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteEvent(event.id, event.title)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete Event
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                        event.status === "active" ? "bg-success/10 text-success" : "bg-accent/10 text-accent"
-                      }`}>{event.status}</span>
-                      <Link to={`/events/${event.id}`}>
-                        <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
-                      </Link>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                            {deletingId === event.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete "{event.title}"?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently delete this event, all its contestants, and associated data. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteEvent(event.id, event.title)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete Event
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="py-12 text-center text-muted-foreground">
-              <p>No events yet. Create your first event!</p>
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-12 text-center text-muted-foreground">
+                <p>No events yet. Create your first event!</p>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </Layout>
