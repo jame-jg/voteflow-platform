@@ -28,7 +28,7 @@ const Login = () => {
           password,
           options: {
             data: { full_name: name, signup_role: role },
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: "https://www.electionbridge.online",
           },
         });
         if (error) throw error;
