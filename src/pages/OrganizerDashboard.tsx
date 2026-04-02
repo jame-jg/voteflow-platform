@@ -27,6 +27,7 @@ const OrganizerDashboard = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
   const handleDeleteEvent = async (eventId: string, eventTitle: string) => {
     setDeletingId(eventId);
