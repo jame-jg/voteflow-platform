@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp, Trash2, Loader2, Tag } from "lucide-react";
+import { BarChart3, Users, Calendar, DollarSign, Plus, Eye, TrendingUp, Trash2, Loader2, Tag, Pencil } from "lucide-react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -179,6 +179,9 @@ const OrganizerDashboard = () => {
                         }`}>{event.status}</span>
                         <Link to={`/events/${event.id}`}>
                           <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
+                        </Link>
+                        <Link to={`/events/${event.id}/edit`}>
+                          <Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button>
                         </Link>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>

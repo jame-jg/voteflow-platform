@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Leaderboard from "./pages/Leaderboard";
 import OrganizerDashboard from "./pages/OrganizerDashboard";
 import CreateEvent from "./pages/CreateEvent";
+import EditEvent from "./pages/EditEvent";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminVerify from "./pages/AdminVerify";
 import PaymentVerify from "./pages/PaymentVerify";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/organizer" element={<OrganizerDashboard />} />
             <Route path="/events/create" element={<CreateEvent />} />
+            <Route path="/events/:id/edit" element={<EditEvent />} />
             <Route path="/admin/verify" element={<AdminVerify />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment/verify" element={<PaymentVerify />} />

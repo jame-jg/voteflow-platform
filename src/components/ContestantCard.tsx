@@ -5,13 +5,14 @@ import { Trophy } from "lucide-react";
 export interface ContestantCardProps {
   id: string;
   name: string;
+  code?: string;
   photoUrl?: string;
   voteCount: number;
   rank: number;
   onVote?: () => void;
 }
 
-const ContestantCard = ({ name, photoUrl, voteCount, rank, onVote }: ContestantCardProps) => {
+const ContestantCard = ({ name, code, photoUrl, voteCount, rank, onVote }: ContestantCardProps) => {
   const isTop3 = rank <= 3;
   const rankColors = ["", "text-gold", "text-muted-foreground", "text-gold-dark"];
 
@@ -36,6 +37,7 @@ const ContestantCard = ({ name, photoUrl, voteCount, rank, onVote }: ContestantC
           )}
         </div>
         <span className="mb-1 text-xs font-medium text-muted-foreground">#{rank}</span>
+        {code && <span className="mb-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground">{code}</span>}
         <h4 className="mb-2 font-display text-base font-bold line-clamp-1">{name}</h4>
         <p className="mb-4 font-display text-2xl font-bold text-accent animate-count-up">{voteCount.toLocaleString()}</p>
         <Button variant="gold" size="sm" className="w-full" onClick={onVote}>
