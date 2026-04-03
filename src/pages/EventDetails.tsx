@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Users, Trophy } from "lucide-react";
+import { ArrowLeft, Calendar, Users, Trophy, Pencil } from "lucide-react";
 import { formatPrice } from "@/lib/currency";
 import Layout from "@/components/Layout";
 import ContestantCard from "@/components/ContestantCard";
