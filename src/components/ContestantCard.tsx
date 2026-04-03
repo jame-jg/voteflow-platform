@@ -5,13 +5,14 @@ import { Trophy } from "lucide-react";
 export interface ContestantCardProps {
   id: string;
   name: string;
+  code?: string;
   photoUrl?: string;
   voteCount: number;
   rank: number;
   onVote?: () => void;
 }
 
-const ContestantCard = ({ name, photoUrl, voteCount, rank, onVote }: ContestantCardProps) => {
+const ContestantCard = ({ name, code, photoUrl, voteCount, rank, onVote }: ContestantCardProps) => {
   const isTop3 = rank <= 3;
   const rankColors = ["", "text-gold", "text-muted-foreground", "text-gold-dark"];
 
