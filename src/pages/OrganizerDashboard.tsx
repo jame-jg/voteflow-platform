@@ -180,6 +180,9 @@ const OrganizerDashboard = () => {
                         <Link to={`/events/${event.id}`}>
                           <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
                         </Link>
+                        <Link to={`/events/${event.id}/edit`}>
+                          <Button variant="ghost" size="icon"><Pencil className="h-4 w-4" /></Button>
+                        </Link>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
