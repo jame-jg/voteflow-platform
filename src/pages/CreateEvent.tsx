@@ -75,7 +75,7 @@ const CreateEvent = () => {
   };
 
   const addContestant = () => {
-    setContestants((prev) => [...prev, { name: "", bio: "", photo: null, photoPreview: "" }]);
+    setContestants((prev) => [...prev, { name: "", bio: "", category: "", photo: null, photoPreview: "" }]);
   };
 
   const removeContestant = (idx: number) => {
