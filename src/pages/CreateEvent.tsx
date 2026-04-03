@@ -152,8 +152,9 @@ const CreateEvent = () => {
           event_id: event.id,
           name: c.name,
           bio: c.bio || null,
+          category: c.category || null,
           photo_url: photoUrl,
-        });
+        } as any);
         if (error) throw error;
       }
 
