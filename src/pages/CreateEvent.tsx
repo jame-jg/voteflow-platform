@@ -294,6 +294,7 @@ const CreateEvent = () => {
                   </div>
                   <div className="flex-1 space-y-2">
                     <Input placeholder="Contestant name *" value={c.name} onChange={(e) => updateContestant(idx, "name", e.target.value)} />
+                    <Input placeholder="Category (e.g. Male, Female, Dance)" value={c.category} onChange={(e) => updateContestant(idx, "category", e.target.value)} />
                     <Input placeholder="Short bio (optional)" value={c.bio} onChange={(e) => updateContestant(idx, "bio", e.target.value)} />
                   </div>
                 </div>
