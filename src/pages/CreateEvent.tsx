@@ -83,7 +83,7 @@ const CreateEvent = () => {
     setContestants((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const updateContestant = (idx: number, field: "name" | "bio", value: string) => {
+  const updateContestant = (idx: number, field: "name" | "bio" | "category", value: string) => {
     setContestants((prev) =>
       prev.map((c, i) => (i === idx ? { ...c, [field]: value } : c))
     );
