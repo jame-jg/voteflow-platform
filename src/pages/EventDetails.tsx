@@ -165,7 +165,7 @@ const EventDetails = () => {
                   <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {contestants.map((c, i) => (
                       <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                        <ContestantCard id={c.id} name={c.name} photoUrl={c.photo_url} voteCount={c.vote_count} rank={i + 1} onVote={() => handleVote(c)} />
+                        <ContestantCard id={c.id} name={c.name} code={c.code} photoUrl={c.photo_url} voteCount={c.vote_count} rank={i + 1} onVote={() => handleVote(c)} />
                       </motion.div>
                     ))}
                   </div>
