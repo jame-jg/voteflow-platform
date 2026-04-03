@@ -154,7 +154,14 @@ const EventDetails = () => {
         </div>
 
         <div>
-          <h2 className="mb-6 text-2xl font-bold">Contestants</h2>
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Contestants</h2>
+            {user && event.organizer_id === user.id && (
+              <Link to={`/events/${event.id}/edit`}>
+                <Button variant="outline" size="sm"><Pencil className="h-4 w-4" /> Edit Event</Button>
+              </Link>
+            )}
+          </div>
           {contestants.length > 0 ? (
             (() => {
               const categories = [...new Set(contestants.map(c => c.category || "Uncategorized"))];
