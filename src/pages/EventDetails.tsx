@@ -156,20 +156,39 @@ const EventDetails = () => {
         <div>
           <h2 className="mb-6 text-2xl font-bold">Contestants</h2>
           {contestants.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {contestants.map((c, i) => (
-                <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                  <ContestantCard
-                    id={c.id}
-                    name={c.name}
-                    photoUrl={c.photo_url}
-                    voteCount={c.vote_count}
-                    rank={i + 1}
-                    onVote={() => handleVote(c)}
-                  />
-                </motion.div>
-              ))}
-            </div>
+            (() => {
+              const categories = [...new Set(contestants.map(c => c.category || "Uncategorized"))];
+              const hasCategories = categories.length > 1 || categories[0] !== "Uncategorized";
+              
+              if (!hasCategories) {
+                return (
+                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {contestants.map((c, i) => (
+                      <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                        <ContestantCard id={c.id} name={c.name} photoUrl={c.photo_url} voteCount={c.vote_count} rank={i + 1} onVote={() => handleVote(c)} />
+                      </motion.div>
+                    ))}
+                  </div>
+                );
+              }
+              
+              return categories.map(cat => {
+                const catContestants = contestants.filter(c => (c.category || "Uncategorized") === cat)
+                  .sort((a, b) => b.vote_count - a.vote_count);
+                return (
+                  <div key={cat} className="mb-8">
+                    <h3 className="mb-4 text-lg font-bold text-muted-foreground border-b border-border pb-2">{cat}</h3>
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      {catContestants.map((c, i) => (
+                        <motion.div key={c.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                          <ContestantCard id={c.id} name={c.name} photoUrl={c.photo_url} voteCount={c.vote_count} rank={i + 1} onVote={() => handleVote(c)} />
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              });
+            })()
           ) : (
             <p className="py-12 text-center text-muted-foreground">No contestants added yet.</p>
           )}
