@@ -1,0 +1,1 @@
+ALTER TABLE public.contestants ADD COLUMN IF NOT EXISTS category text DEFAULT null;

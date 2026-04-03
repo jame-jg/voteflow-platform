@@ -16,6 +16,7 @@ import { CURRENCIES } from "@/lib/currency";
 interface ContestantInput {
   name: string;
   bio: string;
+  category: string;
   photo: File | null;
   photoPreview: string;
 }
@@ -50,7 +51,7 @@ const CreateEvent = () => {
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState("");
   const [contestants, setContestants] = useState<ContestantInput[]>([
-    { name: "", bio: "", photo: null, photoPreview: "" },
+    { name: "", bio: "", category: "", photo: null, photoPreview: "" },
   ]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -74,7 +75,7 @@ const CreateEvent = () => {
   };
 
   const addContestant = () => {
-    setContestants((prev) => [...prev, { name: "", bio: "", photo: null, photoPreview: "" }]);
+    setContestants((prev) => [...prev, { name: "", bio: "", category: "", photo: null, photoPreview: "" }]);
   };
 
   const removeContestant = (idx: number) => {
@@ -82,7 +83,7 @@ const CreateEvent = () => {
     setContestants((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const updateContestant = (idx: number, field: "name" | "bio", value: string) => {
+  const updateContestant = (idx: number, field: "name" | "bio" | "category", value: string) => {
     setContestants((prev) =>
       prev.map((c, i) => (i === idx ? { ...c, [field]: value } : c))
     );
@@ -151,8 +152,9 @@ const CreateEvent = () => {
           event_id: event.id,
           name: c.name,
           bio: c.bio || null,
+          category: c.category || null,
           photo_url: photoUrl,
-        });
+        } as any);
         if (error) throw error;
       }
 
@@ -292,6 +294,7 @@ const CreateEvent = () => {
                   </div>
                   <div className="flex-1 space-y-2">
                     <Input placeholder="Contestant name *" value={c.name} onChange={(e) => updateContestant(idx, "name", e.target.value)} />
+                    <Input placeholder="Category (e.g. Male, Female, Dance)" value={c.category} onChange={(e) => updateContestant(idx, "category", e.target.value)} />
                     <Input placeholder="Short bio (optional)" value={c.bio} onChange={(e) => updateContestant(idx, "bio", e.target.value)} />
                   </div>
                 </div>
