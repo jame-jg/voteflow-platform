@@ -45,6 +45,7 @@ export type Database = {
         Row: {
           bio: string | null
           category: string | null
+          code: string | null
           created_at: string
           event_id: string
           id: string
@@ -55,6 +56,7 @@ export type Database = {
         Insert: {
           bio?: string | null
           category?: string | null
+          code?: string | null
           created_at?: string
           event_id: string
           id?: string
@@ -65,6 +67,7 @@ export type Database = {
         Update: {
           bio?: string | null
           category?: string | null
+          code?: string | null
           created_at?: string
           event_id?: string
           id?: string
