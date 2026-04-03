@@ -51,7 +51,7 @@ const CreateEvent = () => {
   const [banner, setBanner] = useState<File | null>(null);
   const [bannerPreview, setBannerPreview] = useState("");
   const [contestants, setContestants] = useState<ContestantInput[]>([
-    { name: "", bio: "", photo: null, photoPreview: "" },
+    { name: "", bio: "", category: "", photo: null, photoPreview: "" },
   ]);
   const [submitting, setSubmitting] = useState(false);
 
