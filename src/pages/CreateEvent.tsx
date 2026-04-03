@@ -16,6 +16,7 @@ import { CURRENCIES } from "@/lib/currency";
 interface ContestantInput {
   name: string;
   bio: string;
+  category: string;
   photo: File | null;
   photoPreview: string;
 }
