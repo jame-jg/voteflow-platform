@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Vote, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Footer = () => (
   <footer className="border-t border-border bg-card">
@@ -7,9 +8,7 @@ const Footer = () => (
       <div className="grid gap-8 md:grid-cols-4">
         <div>
           <Link to="/" className="flex items-center gap-2 mb-4">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-gold">
-              <Vote className="h-4 w-4 text-accent-foreground" />
-            </div>
+            <img src={logo} alt="Electionbridge" className="h-8 w-8 rounded-lg object-contain" />
             <span className="font-display text-lg font-bold">
               Election<span className="text-gold">bridge</span>
             </span>
