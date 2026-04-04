@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Vote, LogOut, User, Shield } from "lucide-react";
+import { Menu, X, LogOut, User, Shield } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,9 +39,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-gold">
-            <Vote className="h-5 w-5 text-accent-foreground" />
-          </div>
+          <img src={logo} alt="Electionbridge" className="h-9 w-9 rounded-lg object-contain" />
           <span className="font-display text-xl font-bold text-foreground">
             Election<span className="text-gold">bridge</span>
           </span>
