@@ -42,7 +42,7 @@ const Index = () => {
         <div className="container relative py-20 md:py-32">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-2xl">
             <span className="mb-4 inline-block rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold">
-              #1 Pay-to-Vote Platform
+              #1 Pay-to-Vote Platform — Electionbridge
             </span>
             <h1 className="mb-6 font-display text-4xl font-extrabold leading-tight text-card-foreground md:text-6xl" style={{ color: 'hsl(0, 0%, 98%)' }}>
               Vote. Support.{" "}
@@ -109,7 +109,7 @@ const Index = () => {
       <section className="border-t border-border bg-card py-16 md:py-24">
         <div className="container">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">Why VotePay?</h2>
+            <h2 className="text-3xl font-bold md:text-4xl">Why Electionbridge?</h2>
             <p className="mt-2 text-muted-foreground">Built for trust, speed, and simplicity</p>
           </div>
           <div className="grid gap-8 md:grid-cols-3">

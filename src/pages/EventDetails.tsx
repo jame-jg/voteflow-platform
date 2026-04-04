@@ -156,7 +156,7 @@ const EventDetails = () => {
         <div>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold">Contestants</h2>
-            {user && event.organizer_id === user.id && (
+            {user && user.id === event.organizer_id && (
               <Link to={`/events/${event.id}/edit`}>
                 <Button variant="outline" size="sm"><Pencil className="h-4 w-4" /> Edit Event</Button>
               </Link>
