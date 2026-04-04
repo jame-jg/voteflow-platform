@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Vote } from "lucide-react";
+import { Vote, MessageCircle } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border bg-card">
@@ -11,7 +11,7 @@ const Footer = () => (
               <Vote className="h-4 w-4 text-accent-foreground" />
             </div>
             <span className="font-display text-lg font-bold">
-              Vote<span className="text-gold">Pay</span>
+              Election<span className="text-gold">bridge</span>
             </span>
           </Link>
           <p className="text-sm text-muted-foreground">
@@ -33,15 +33,21 @@ const Footer = () => (
           </ul>
         </div>
         <div>
-          <h4 className="mb-3 text-sm font-semibold">Legal</h4>
+          <h4 className="mb-3 text-sm font-semibold">Contact</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
+            <li>
+              <a href="https://wa.me/233505432337" target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors">
+                <MessageCircle className="h-3.5 w-3.5" /> Contact Admin
+              </a>
+            </li>
             <li><span className="cursor-pointer hover:text-foreground transition-colors">Privacy Policy</span></li>
             <li><span className="cursor-pointer hover:text-foreground transition-colors">Terms of Service</span></li>
           </ul>
         </div>
       </div>
       <div className="mt-8 border-t border-border pt-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} VotePay. All rights reserved.
+        © {new Date().getFullYear()} Electionbridge. All rights reserved. Built by Michael Kutin.
       </div>
     </div>
   </footer>

@@ -42,7 +42,7 @@ const Header = () => {
             <Vote className="h-5 w-5 text-accent-foreground" />
           </div>
           <span className="font-display text-xl font-bold text-foreground">
-            Vote<span className="text-gold">Pay</span>
+            Election<span className="text-gold">bridge</span>
           </span>
         </Link>
 
