@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,7 +13,6 @@ import OrganizerDashboard from "./pages/OrganizerDashboard";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminVerify from "./pages/AdminVerify";
 import PaymentVerify from "./pages/PaymentVerify";
 import NotFound from "./pages/NotFound";
 
@@ -35,7 +34,7 @@ const App = () => (
             <Route path="/organizer" element={<OrganizerDashboard />} />
             <Route path="/events/create" element={<CreateEvent />} />
             <Route path="/events/:id/edit" element={<EditEvent />} />
-            <Route path="/admin/verify" element={<AdminVerify />} />
+            <Route path="/admin/verify" element={<Navigate to="/admin" replace />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/payment/verify" element={<PaymentVerify />} />
             <Route path="*" element={<NotFound />} />

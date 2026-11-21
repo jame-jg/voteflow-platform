@@ -24,12 +24,6 @@ const AdminDashboard = () => {
     if (!user) { navigate("/login"); return; }
 
     const checkAdminAndFetch = async () => {
-      // Verify admin role AND session verification
-      const verified = sessionStorage.getItem("admin_verified");
-      if (!verified || Date.now() - parseInt(verified) > 30 * 60 * 1000) {
-        navigate("/admin/verify");
-        return;
-      }
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin");
       if (!roles || roles.length === 0) { navigate("/"); return; }
       setIsAdmin(true);

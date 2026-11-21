@@ -58,7 +58,7 @@ const Header = () => {
           {user ? (
             <>
               {isAdmin && (
-                <Link to="/admin/verify">
+                <Link to="/admin">
                   <Button variant="ghost" size="sm"><Shield className="h-4 w-4" /> Admin</Button>
                 </Link>
               )}
@@ -99,7 +99,7 @@ const Header = () => {
                 {user ? (
                   <>
                     {isAdmin && (
-                      <Link to="/admin/verify" onClick={() => setMobileOpen(false)}>
+                      <Link to="/admin" onClick={() => setMobileOpen(false)}>
                         <Button variant="ghost" className="w-full"><Shield className="h-4 w-4" /> Admin</Button>
                       </Link>
                     )}
